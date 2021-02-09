@@ -1,0 +1,33 @@
+{
+  "name": "hsump1996-homework01",
+  "version": "1.0.0",
+  "description": "hsump1996 Homework #01 - Connectmoji",
+  "main": ".eslintrc.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nyu-csci-ua-0480-034-spring-2021/hsump1996-homework01.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nyu-csci-ua-0480-034-spring-2021/hsump1996-homework01/issues"
+  },
+  "homepage": "https://github.com/nyu-csci-ua-0480-034-spring-2021/hsump1996-homework01#readme",
+  "devDependencies": {
+    "chai": "^4.3.0",
+    "eslint": "^7.19.0",
+    "eslint-plugin-mocha": "^8.0.0",
+    "mocha": "^8.2.1"
+  },
+  "dependencies": {
+    "clear": "^0.1.0",
+    "readline-sync": "^1.4.10",
+    "wcwidth": "^1.0.1"
+  }
+}
