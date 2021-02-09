@@ -1,22 +1,62 @@
 // require your module, connectmoji
 // require any other modules that you need, like clear and readline-sync
-// const s = 😎, 😎💻AABBCC, 6, 7, 4
+// const s = 😎,😎💻AABBCC,6,7,4
 
 const c = require('./connectmoji.js');
 const clear = require('clear');
 const readlineSync = require('readline-sync');
 
+const runInteractiveMode = function (state, playerVal, computerVal, numConsecutive) {
+    console.log(c.boardToString(state.board));
+  
+    let letter = null;
+    while (!('winner' in state) && state.board.data.some(x => (x === null))) {
+      if (state.lastPieceMoved === playerVal) {
+        readlineSync.question('Press <ENTER> to see computer move');
+        clear();
+        let nullOrRowCal = null;
+        while (nullOrRowCal === null) {
+          const randomOffset = Math.floor(Math.random() * Math.floor(state.board.cols));
+          letter = String.fromCharCode(65 + randomOffset);
+          nullOrRowCal = c.getEmptyRowCol(state.board, letter);
+        }
+        console.log(`...dropping in column ${letter}`);
+        state = c.autoplay(state.board, `${computerVal}${playerVal}${letter}`, numConsecutive);
+        console.log(c.boardToString(state.board));
+      } else {
+        let nullOrRowCal = null;
+        while (nullOrRowCal === null) {
+          letter = readlineSync.question('Choose a column letter to drop your piece in\n>');
+          nullOrRowCal = c.getEmptyRowCol(state.board, letter);
+          if (nullOrRowCal === null) {
+            console.log('Oops, that is not a valid move, try again!');
+          }
+        }
+        clear();
+        console.log(`...dropping in column ${letter}`);
+        state = c.autoplay(state.board, `${playerVal}${computerVal}${letter}`, numConsecutive);
+        console.log(c.boardToString(state.board));
+      }
+  
+    }
+    if ('winner' in state) {
+      console.log(`Winner is ${state.winner}`);
+    } else {
+      console.log('No Winner. So sad 😭');
+    }
+  };
+
 const useScriptedMoves = function () {
   const [playerVal, playersAndMoveString, numRowsStr, numColumnsStr, numConsecutiveStr] = process.argv[2].split(',');
-  const [p1, p2, ...rest] = [...playersAndMoveString];
+  const [p1, p2,] = [...playersAndMoveString];
   const computerVal = playerVal === p1 ? p2 : p1;
   const [numRows, numColumns, numConsecutive] = [parseInt(numRowsStr), parseInt(numColumnsStr), parseInt(numConsecutiveStr)];
   const board = c.generateBoard(numRows, numColumns);
 
-  let stateAfterAutoPlay = c.autoplay(board, playersAndMoveString, numConsecutive);
+  const stateAfterAutoPlay = c.autoplay(board, playersAndMoveString, numConsecutive);
   readlineSync.question('Press <ENTER> to continue...');
   runInteractiveMode(stateAfterAutoPlay, playerVal, computerVal, numConsecutive);
-}
+};
 
 const useControlledGameSettings = function () {
   const userInput1 = readlineSync.question(
@@ -44,50 +84,11 @@ const useControlledGameSettings = function () {
     board: c.generateBoard(numRows, numColumns),
     pieces: [p1, p2],
     lastPieceMoved: p2
-  }
+  };
   readlineSync.question('Press <ENTER> to start game');
   runInteractiveMode(initialState, playerVal, computerVal, numConsecutive);
-}
+};
 
-const runInteractiveMode = function (state, playerVal, computerVal, numConsecutive) {
-  console.log(c.boardToString(state.board));
-
-  let letter = null;
-  while (!('winner' in state) && state.board.data.some(x => (x == null))) {
-    if (state.lastPieceMoved === playerVal) {
-      readlineSync.question('Press <ENTER> to see computer move');
-      clear();
-      let nullOrRowCal = null;
-      while (nullOrRowCal === null) {
-        let randomOffset = Math.floor(Math.random() * Math.floor(state.board.cols));
-        letter = String.fromCharCode(65 + randomOffset);
-        nullOrRowCal = c.getEmptyRowCol(state.board, letter);
-      }
-      console.log(`...dropping in column ${letter}`);
-      state = c.autoplay(state.board, `${computerVal}${playerVal}${letter}`, numConsecutive);
-      console.log(c.boardToString(state.board));
-    } else {
-      let nullOrRowCal = null;
-      while (nullOrRowCal === null) {
-        letter = readlineSync.question('Choose a column letter to drop your piece in\n>');
-        nullOrRowCal = c.getEmptyRowCol(state.board, letter);
-        if (nullOrRowCal === null) {
-          console.log('Oops, that is not a valid move, try again!');
-        }
-      }
-      clear();
-      console.log(`...dropping in column ${letter}`);
-      state = c.autoplay(state.board, `${playerVal}${computerVal}${letter}`, numConsecutive);
-      console.log(c.boardToString(state.board));
-    }
-
-  }
-  if ('winner' in state) {
-    console.log(`Winner is ${state.winner}`);
-  } else {
-    console.log('No Winner. So sad 😭');
-  }
-}
 
 if (process.argv.length > 2) {
   useScriptedMoves();

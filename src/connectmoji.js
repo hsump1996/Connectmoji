@@ -140,7 +140,7 @@ const c = {
         }
 
         if (count === board.rows) {
-            answer = {row: board.rows, col: col};
+            answer = {row: board.rows-1, col: col};
         }
 
 
