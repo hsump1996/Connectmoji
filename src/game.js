@@ -7,17 +7,32 @@ const clear = require('clear');
 const readlineSync = require('readline-sync');
 
 
-const arr = process.argv[2].split(',');
-const player_value = arr[0];
-const move_string = arr[1];
-const number_rows = arr[2];
-const number_columns = arr[3];
-const number_consecutive = arr[4];
+//Scripted Moves
+if (process.argv.length > 2) {
+    const arr = process.argv[2].split(',');
+    const player_value = arr[0];      //😎
+    const move_string = arr[1];       //😎💻AABBCC
+    const number_rows = arr[2];       // 6
+    const number_columns = arr[3];    // 7
+    const number_consecutive = arr[4]; //4
 
-const board = c.generateBoard (number_rows, number_columns) 
+    const board = c.generateBoard (number_rows, number_columns) 
 
-const moveStringArray = [...moveString];
-const auto = c.autoplay(board, m)
+    const moveStringArray = [...moveString];
+    const automated_moves = c.autoplay(board, number_consecutive)
+
+    const message = readlineSync.question('Press ENTER to continue...');
+
+    const userReply = 
+
+
+// User Controlled Game Settings    
+} else {
+
+    
+
+
+}
 
 
 //PLAYER_VALUE -> the value that the player will use for the game

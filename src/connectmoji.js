@@ -127,7 +127,7 @@ const c = {
             const rowCol = c.indexToRowCol(board, i)
             if (rowCol.col === col) {
                 if (board.data[i] === empty) {
-                    if (prevNull !== true) {
+                    if (prevNull == false) {
                         answer = {row: rowCol.row, col: rowCol.col};
                         count++
                         prevNull = true;
@@ -167,7 +167,6 @@ const c = {
 
     ,hasConsecutiveValues: function(board, row, col, n) {
 
-        let answer = false;
         let variableIndex = c.rowColToIndex(board, row, col);
         let variable = board.data[variableIndex];
         
@@ -188,7 +187,6 @@ const c = {
                     } else {
                         if (length1 === n) {
                             answer = true;
-                            break;
                         } else {
                             length1 = 0;
                         }
@@ -197,7 +195,7 @@ const c = {
             }
 
             if (length1 === n) {
-                answer = true;
+                return true;
             }
 
             let length2 = 0;
@@ -211,7 +209,6 @@ const c = {
                     } else {
                         if (length2 === n) {
                             answer = true;
-                            break;
                         } else {
                             length2 = 0;
                         }
@@ -221,7 +218,7 @@ const c = {
 
 
             if (length2 === n) {
-                answer = true;
+                return true;
             }
 
             let length3 = 0;
@@ -235,7 +232,6 @@ const c = {
                     } else {
                         if (length3 === n) {
                             answer = true;
-                            break;
                         } else {
                             length3 = 0;
                         }
@@ -244,7 +240,7 @@ const c = {
             }
 
             if (length3 === n) {
-                answer = true;
+                return true;
             }
 
 
@@ -258,8 +254,7 @@ const c = {
                         length4++;
                     } else {
                         if (length4 === n) {
-                            answer = true;
-                            break;
+                            return true;
                         } else {
                             length4 = 0;
                         }
@@ -268,106 +263,67 @@ const c = {
             }
 
             if (length4 === n) {
-                answer = true;
+                return true;
             }
 
-            return answer;
+            return false;
         }
     }
 
-    ,autoplay: function (board, s, numConsecutive) {
-        //const s = 'vwABCDE'
-        //const s = '😄🤮D';
-        //const s = '😄🤮AABBCCDD';
-        
-        const error = undefined;
+    ,autoplay: function(board, s, numConsecutive) {
 
-        let victory = null;
+        let currentBoard = board;
+        let gameFinished = false;
 
-        let copiedBoard = {
-            data: board.data.slice(),
-            rows: board.rows,
-            cols: board.cols,
-        }
+        const sArray = [...s];
+        const pieces = sArray.slice(0, 2);
+        const playList = sArray.slice(2);
 
-        const pieces = s.slice(0, 2);
-        const arrayOfS = s.split("");
+        let lastPlayer = pieces[0];
 
-        let lastPieceMoved = undefined;
+        for (let [i, letter] of playList.entries()) {
+            lastPlayer = pieces[i % 2];
 
-        let winner = undefined;
-
-        for (let i = 2; i < arrayOfS.length; i++) {
-
-            let intendedColumn = c.letterToCol(arrayOfS[i])
-            
-            //Error Case where the intended column is out of bounds
-            if (intendedColumn > copiedBoard.cols) {
-                
-                copiedBoard = null;
-                
-                if (i % 2 ==0 ) {
-                    lastPieceMoved = arrayOfS[0];
-                } else {
-                    lastPieceMoved = arrayOfS[1]
+            // check 1
+            if (gameFinished === true) {
+                return {
+                    board: null,
+                    pieces: pieces,
+                    lastPieceMoved: lastPlayer,
+                    error: {num: i + 1, val: lastPlayer, col: letter}
                 }
-                error = {num: i, val: lastPieceMoved, col: arrayOfS[i]}
             }
 
-            //Error Case where there are more moves after win
-            if (victory == true) {
-                copiedBoard = null;
-                
-                if (i % 2 ==0 ) {
-                    lastPieceMoved = arrayOfS[0];
-                } else {
-                    lastPieceMoved = arrayOfS[1]
+            // check 2
+            let nullOrRowCol = c.getEmptyRowCol(currentBoard, letter);
+            if (nullOrRowCol === null) {
+                return {
+                    board: null,
+                    pieces: pieces,
+                    lastPieceMoved: lastPlayer,
+                    error: {num: i + 1, val: lastPlayer, col: letter}
                 }
-                error = {num: i, val: lastPieceMoved, col: arrayOfS[i]}
-
-            }
-            
-            //Looks for the empty column
-            const emptyRowCol = c.getEmptyRowCol(copiedBoard, arrayOfS[i]);
-
-            copiedBoard = c.setCell(copiedBoard, emptyRowCol.row, emptyRowCol.col, arrayOfS[i]);
-
-            if (i % 2 ==0 ) {
-
-                lastPieceMoved = arrayOfS[0]
-
-            } else {
-                lastPieceMoved = arrayOfS[1]
             }
 
-            //Last Move
-            if (i == arrayOfS.length-1) {
-
-                victory = c.hasConsecutiveValues(copiedBoard, emptyRowCol.row, emptyRowCol.col, numConsecutive)
-
-                if (victory == true) {
-                    winner = lastPieceMoved;
-                } else {
-                    break;
-                }
-
+            let {row, col} = nullOrRowCol;
+            currentBoard = c.setCell(currentBoard, row, col, lastPlayer);
+            if (c.hasConsecutiveValues(currentBoard, row, col, numConsecutive)) {
+                gameFinished = true;
             }
+
         }
-
-        if (error === undefined && winner !== undefined) {
-
-            return {board: copiedBoard, pieces: pieces, lastPieceMoved: lastPieceMoved, winner: winner}
-
-        } else if (error === undefined && winner === undefined ) {
-            return {board: copiedBoard, pieces: pieces, lastPieceMoved: lastPieceMoved}
-        } else {
-            return {board: copiedBoard, pieces: pieces, lastPieceMoved: lastPieceMoved}
+        let state = {
+            board: currentBoard,
+            pieces: pieces,
+            lastPieceMoved: lastPlayer
         }
+        if (gameFinished === true) {
+            state['winner'] = lastPlayer;
+        }
+        return state;
 
-        
     }
     
-
 }
 
 module.exports = c;
