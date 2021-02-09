@@ -284,13 +284,13 @@ describe('connectmoji', function() {
               board, 
               {row:2, col:1, val: '😄'},
               {row:1, col:1, val: '😄'}, 
-              {row:0, col:1, val: '😄'}
+              {row:0, col:2, val: '😄'}
             );
 
-            expect(c.hasConsecutiveValues(updatedBoard, 2, 1, 3)).to.be.true;
+            expect(c.hasConsecutiveValues(updatedBoard, 2, 1, 3)).to.be.false;
             // (yes, the following wouldn't be possible in-game)
-            expect(c.hasConsecutiveValues(updatedBoard, 1, 1, 3)).to.be.true;
-            expect(c.hasConsecutiveValues(updatedBoard, 0, 1, 3)).to.be.true;
+            expect(c.hasConsecutiveValues(updatedBoard, 1, 1, 3)).to.be.false;
+            expect(c.hasConsecutiveValues(updatedBoard, 0, 2, 3)).to.be.false;
         });
         
         it('determines if value at location is repeated x times horizontally', function() {
