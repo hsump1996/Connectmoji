@@ -9,9 +9,9 @@ const c = {
             data: new Array(rows*cols),
             rows: rows,
             cols: cols
-        }
+        };
 
-        board.data.fill(fill)
+        board.data.fill(fill);
 
         return board;
 
@@ -33,7 +33,7 @@ const c = {
             data: board.data.slice(),
             rows: board.rows,
             cols: board.cols,
-        }
+        };
 
         copiedBoard.data[c.rowColToIndex(board, row, col)] = value;
 
@@ -47,10 +47,10 @@ const c = {
             data: board.data.slice(),
             rows: board.rows,
             cols: board.cols,
-        }
+        };
 
         for (let i = 0; i < moves.length; i++) {
-            copiedBoard = c.setCell(copiedBoard, moves[i].row, moves[i].col, moves[i].val)
+            copiedBoard = c.setCell(copiedBoard, moves[i].row, moves[i].col, moves[i].val);
         }
         
         return copiedBoard;
@@ -63,7 +63,7 @@ const c = {
 
             row: Math.floor(i/board.cols),
             col: Math.floor(i % board.cols)
-        }
+        };
 
         return rowCol;
 
@@ -101,7 +101,7 @@ const c = {
             return null;
         } 
 
-        var number = letter.charCodeAt(0) - 65;
+        const number = letter.charCodeAt(0) - 65;
 
         if (number < 0 || number > 25) {
             return null;
@@ -124,12 +124,12 @@ const c = {
         }
 
         for (let i = board.data.length-1; i >= 0; i--) {
-            const rowCol = c.indexToRowCol(board, i)
+            const rowCol = c.indexToRowCol(board, i);
             if (rowCol.col === col) {
                 if (board.data[i] === empty) {
-                    if (prevNull == false) {
+                    if (prevNull === false) {
                         answer = {row: rowCol.row, col: rowCol.col};
-                        count++
+                        count++;
                         prevNull = true;
                     }
                 } else {
@@ -150,14 +150,14 @@ const c = {
 
     ,getAvailableColumns: function(board) {
 
-        let answerArray = []
+        const answerArray = [];
 
         for (let i = 0; i < board.data.length; i++) {
-            let letter = String.fromCodePoint(65 + i)
-            const emptyCols = c.getEmptyRowCol(board, letter)
+            const letter = String.fromCodePoint(65 + i);
+            const emptyCols = c.getEmptyRowCol(board, letter);
 
             if (emptyCols !== null) {
-                answerArray.push(letter)
+                answerArray.push(letter);
             }
         }
 
@@ -167,8 +167,8 @@ const c = {
 
     ,hasConsecutiveValues: function(board, row, col, n) {
 
-        let variableIndex = c.rowColToIndex(board, row, col);
-        let variable = board.data[variableIndex];
+        const variableIndex = c.rowColToIndex(board, row, col);
+        const variable = board.data[variableIndex];
         
         if (variable === null) {
             
@@ -180,13 +180,13 @@ const c = {
 
             //Vertical Testing
             for (let i = 0; i < board.data.length; i++) {
-                const rowCol = c.indexToRowCol(board, i)
+                const rowCol = c.indexToRowCol(board, i);
                 if (rowCol.col === col) {
                     if (board.data[i] !== null && board.data[i] === variable) {
                         length1++;
                     } else {
-                        if (length1 === n) {
-                            answer = true;
+                        if (length1 === n){
+                            return true;
                         } else {
                             length1 = 0;
                         }
@@ -202,13 +202,13 @@ const c = {
 
             //Horizontal Testing
             for (let i = 0; i < board.data.length; i++) {
-                const rowCol = c.indexToRowCol(board, i)
+                const rowCol = c.indexToRowCol(board, i);
                 if (rowCol.row === row) {
                     if (board.data[i] !== null && board.data[i] === variable) {
                         length2++;
                     } else {
                         if (length2 === n) {
-                            answer = true;
+                            return true;
                         } else {
                             length2 = 0;
                         }
@@ -225,13 +225,13 @@ const c = {
 
             //Right Diagonal Testing
             for (let i = 0; i < board.data.length; i++) {
-                const rowCol = c.indexToRowCol(board, i)
+                const rowCol = c.indexToRowCol(board, i);
                 if ((rowCol.col-rowCol.row) === (col-row)) {
                     if (board.data[i] !== null && board.data[i] === variable) {
                         length3++;
                     } else {
                         if (length3 === n) {
-                            answer = true;
+                            return true;
                         } else {
                             length3 = 0;
                         }
@@ -248,7 +248,7 @@ const c = {
 
             //Left Diagonal Testing
             for (let i = 0; i < board.data.length; i++) {
-                const rowCol = c.indexToRowCol(board, i)
+                const rowCol = c.indexToRowCol(board, i);
                 if ((rowCol.col+rowCol.row) === (col+row)) {
                     if (board.data[i] !== null && board.data[i] === variable) {
                         length4++;
@@ -281,7 +281,7 @@ const c = {
 
         let lastPlayer = pieces[0];
 
-        for (let [i, letter] of playList.entries()) {
+        for (const [i, letter] of playList.entries()) {
             lastPlayer = pieces[i % 2];
 
             // check 1
@@ -291,32 +291,32 @@ const c = {
                     pieces: pieces,
                     lastPieceMoved: lastPlayer,
                     error: {num: i + 1, val: lastPlayer, col: letter}
-                }
+                };
             }
 
             // check 2
-            let nullOrRowCol = c.getEmptyRowCol(currentBoard, letter);
+            const nullOrRowCol = c.getEmptyRowCol(currentBoard, letter);
             if (nullOrRowCol === null) {
                 return {
                     board: null,
                     pieces: pieces,
                     lastPieceMoved: lastPlayer,
                     error: {num: i + 1, val: lastPlayer, col: letter}
-                }
+                };
             }
 
-            let {row, col} = nullOrRowCol;
+            const {row, col} = nullOrRowCol;
             currentBoard = c.setCell(currentBoard, row, col, lastPlayer);
             if (c.hasConsecutiveValues(currentBoard, row, col, numConsecutive)) {
                 gameFinished = true;
             }
 
         }
-        let state = {
+        const state = {
             board: currentBoard,
             pieces: pieces,
             lastPieceMoved: lastPlayer
-        }
+        };
         if (gameFinished === true) {
             state['winner'] = lastPlayer;
         }
@@ -324,6 +324,6 @@ const c = {
 
     }
     
-}
+};
 
 module.exports = c;
