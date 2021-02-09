@@ -230,6 +230,7 @@ const c = {
                     if (board.data[i] !== null && board.data[i] === variable) {
                         length3++;
                     } else {
+                        
                         if (length3 === n) {
                             return true;
                         } else {
